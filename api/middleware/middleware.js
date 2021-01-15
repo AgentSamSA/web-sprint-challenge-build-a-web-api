@@ -16,14 +16,14 @@ async function validateActionId(req, res, next) {
 }
 
 function validateAction(req, res, next) {
-    const projectId = req.body.projectId;
+    const projectId = req.body.project_id;
     const description = req.body.description;
 
     if (!req.body) {
         res.status(400).json({ message: "missing action data" });
     } else if (!projectId || !description || !req.body.notes) {
         res.status(400).json({ message: "project id, description, and notes required" });
-    } else if (projectId !== Projects.get(projectId)) {
+    } else if (!Projects.get(projectId)) {
         res.status(404).json({ message: "project with that id not found" });
     } else if (!description.length > 128) {
         res.status(400).json({ message: "description length too long (max 128 chars.)" });
@@ -37,7 +37,7 @@ async function validateProjectId(req, res, next) {
         const project = await Projects.get(req.params.id);
         if (project) {
             req.project = project;
-            next()
+            next();
         } else {
             res.status(404).json({ message: "project with that id not found" });
         }
